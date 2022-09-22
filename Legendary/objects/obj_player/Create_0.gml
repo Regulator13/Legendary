@@ -2,6 +2,7 @@
 
 player_num = 0
 Target = noone
+reload = 30 //Placeholder for attack reloads
 
 #region Player Stats
 hp_max = 1000

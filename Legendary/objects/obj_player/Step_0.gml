@@ -5,6 +5,9 @@ if player_num = 0{
 	var up = keyboard_check(ord("W"))
 	var down = keyboard_check(ord("S"))
 	var primary = keyboard_check(ord("G"))
+	var secondary = keyboard_check(ord("Y"))
+	var tertiary = keyboard_check(ord("U"))
+	var quaternary = keyboard_check(ord("T"))
 }
 else if player_num = 1{
 	var left = keyboard_check(vk_left)
@@ -12,6 +15,9 @@ else if player_num = 1{
 	var up = keyboard_check(vk_up)
 	var down = keyboard_check(vk_down)
 	var primary = keyboard_check(vk_numpad0)
+	var secondary = keyboard_check(vk_numpad2)
+	var tertiary = keyboard_check(vk_numpad3)
+	var quaternary = keyboard_check(vk_numpad1)
 }
 
 
@@ -52,10 +58,12 @@ if y > room_height y = room_height
 if attack_buffer < 1{
 	if primary{
 		create_punch()
-		attack_buffer = attack_buffer_max
+	}
+	if secondary{
+		create_dart()
 	}
 }
-else{
+else if attack_buffer > 0{
 	attack_buffer -= 1
 }
 
