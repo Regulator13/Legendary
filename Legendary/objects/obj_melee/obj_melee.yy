@@ -1,16 +1,19 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "par_wall",
-  "spriteId": null,
-  "solid": true,
+  "name": "obj_melee",
+  "spriteId": {
+    "name": "spr_melee",
+    "path": "sprites/spr_melee/spr_melee.yy",
+  },
+  "solid": false,
   "visible": true,
   "managed": true,
   "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": {
-    "name": "par_solid",
-    "path": "objects/par_solid/par_solid.yy",
+    "name": "par_attack_move",
+    "path": "objects/par_attack_move/par_attack_move.yy",
   },
   "physicsObject": false,
   "physicsSensor": false,
@@ -26,12 +29,11 @@
   "physicsShapePoints": [],
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"par_attack","path":"objects/par_attack/par_attack.yy",},},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Walls",
-    "path": "folders/Objects/Walls.yy",
+    "name": "Items",
+    "path": "folders/Objects/Items.yy",
   },
 }
