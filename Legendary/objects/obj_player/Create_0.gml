@@ -9,6 +9,10 @@ acceleration_steps = 10 //number of steps it takes to get to full speed
 deceleration_speed = .1 //speed players slow down
 x_force = 0 //saved h_speed of a player during a collision
 y_force = 0 //saved v_speed of a player during a collision
+h_knockback = 0 //amount of horizontal knockback that will strike the player afted a delay.
+v_knockback = 0 //amount of vertical knockback that will strike the player afted a delay
+knockback_buffer_max = 3 //delay before knockback applies
+knockback_buffer = knockback_buffer_max
 
 #region Player Stats
 //Physical

@@ -7,8 +7,8 @@ if other.team != player_num{
 	hp -= temp
 	
 	//knockback player
-	hspeed += lengthdir_x(other.knockback/(weight/100), other.direction)
-	vspeed += lengthdir_y(other.knockback/(weight/100), other.direction)
+	h_knockback += lengthdir_x(other.knockback/(weight/100), other.direction)
+	v_knockback += lengthdir_y(other.knockback/(weight/100), other.direction)
 
 	//If either is less than 1, destroy them
 	if other.damage <= 0{

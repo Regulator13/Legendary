@@ -3,7 +3,7 @@
 
 function set_player_stats(){
 	//Physical
-	hp_max = stat_chooser(100000) //Player's health
+	hp_max = stat_chooser(1000000) //Player's health
 	strength = stat_chooser(100) //Strength/100 = physical attack multiplier
 	energy_regen = stat_chooser(10) //Energy regained every 10 steps
 	hp = hp_max

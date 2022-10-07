@@ -31,6 +31,19 @@ punch = {
 	sprite : spr_punch
 }
 
+stonewall = {
+	attack_move : create_stonewall,
+	attack_type : MELEE,
+	energy_cost : 200,
+	inaccuracy : 5,
+	reload : 150,
+	damage : 10, //800
+	knockback : 15,
+	move_speed : 1,
+	lifespan : 300,
+	sprite : spr_stonewall
+}
+
 #endregion
 
 #region Projectile Attacks
@@ -47,18 +60,6 @@ dart = {
 	sprite : spr_dart
 }
 
-stonewall = {
-	attack_move : create_stonewall,
-	attack_type : PROJECTILE,
-	energy_cost : 200,
-	inaccuracy : 5,
-	reload : 150,
-	damage : 10, //800
-	knockback : 10,
-	move_speed : 1,
-	lifespan : 300,
-	sprite : spr_stonewall
-}
 #endregion
 
 #endregion

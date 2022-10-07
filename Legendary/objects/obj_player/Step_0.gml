@@ -27,6 +27,19 @@ else if player_num = 1{
 hspeed = sign(hspeed)*(max(abs(hspeed)-(deceleration_speed), 0))
 vspeed = sign(vspeed)*(max(abs(vspeed)-(deceleration_speed), 0))
 
+//Knockback
+if abs(h_knockback) > 0 or abs(v_knockback) > 0{
+	knockback_buffer -= 1
+}
+
+if knockback_buffer < 1{
+	hspeed += h_knockback
+	vspeed += v_knockback
+	h_knockback = 0
+	v_knockback = 0
+	knockback_buffer = knockback_buffer_max
+}
+
 if x_force == 0 and y_force == 0{ //Moving only allowed if not flying into a wall
 	if left{
 		if hspeed > -player_speed{
@@ -50,11 +63,16 @@ if x_force == 0 and y_force == 0{ //Moving only allowed if not flying into a wal
 	}
 }
 
+if abs(x_force) > 0 or abs(y_force) > 0{
+	direction = 0
+	direction = (arctan2(-y_force,x_force)*180)/pi
+}
+
 //If smashing against a solid object
 if abs(x_force) > 0{
-	if not place_free(x + sign(x_force), y){
+	if not place_free(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction)){
 		//If a big wall is present, break it into small walls
-		var BigInst = instance_place(x + sign(x_force), y, par_wall)
+		var BigInst = instance_place(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction), par_wall)
 		if BigInst != noone{
 			with BigInst{
 				//Create 4x4 of small walls in place
@@ -67,7 +85,7 @@ if abs(x_force) > 0{
 			}
 		}
 		//If a small wall is present deal damage to it
-		var Inst = instance_place(x + sign(x_force), y, par_small_wall)
+		var Inst = instance_place(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction), par_small_wall)
 		if Inst != noone{
 			var hp_lost = min(Inst.hp, abs(x_force)*(weight/100)) //how much damage the wall is taking
 			Inst.hp -= hp_lost
@@ -88,9 +106,9 @@ if abs(x_force) > 0{
 
 //If smashing against a solid object
 if abs(y_force) > 0{
-	if not place_free(x, y + sign(y_force)){
+	if not place_free(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction)){
 		//If a big wall is present, break it into small walls
-		var BigInst = instance_place(x, y + sign(y_force), par_wall)
+		var BigInst = instance_place(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction), par_wall)
 		if BigInst != noone{
 			with BigInst{
 				//Create 4x4 of small walls in place
@@ -103,7 +121,7 @@ if abs(y_force) > 0{
 			}
 		}
 		//If a small wall is present deal damage to it
-		var Inst = instance_place(x, y + sign(y_force), par_small_wall)
+		var Inst = instance_place(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction), par_small_wall)
 		if Inst != noone{
 			var hp_lost = min(Inst.hp, abs(y_force)*(weight/100)) //how much damage the wall is taking
 			Inst.hp -= hp_lost
@@ -123,10 +141,77 @@ if abs(y_force) > 0{
 }
 
 //Collisions with solid
-var h_iterations = ceil(abs(hspeed)/P_SIZE)
-var v_iterations = ceil(abs(vspeed)/P_SIZE)
-var x_inc = 0 //store the number of pixels it takes to reach a collision
-var y_inc = 0 //store the number of pixels it takes to reach a collision
+//var h_iterations = ceil(abs(hspeed)/P_SIZE)
+//var v_iterations = ceil(abs(vspeed)/P_SIZE)
+
+var distant_collision = collision_line(x, y, x+hspeed, y+vspeed, par_solid, false, true)
+var close_collision = not place_free(x + hspeed, y + vspeed)
+
+if distant_collision or close_collision{
+	if distant_collision{
+		while place_free(x + lengthdir_x(8, direction), y + lengthdir_y(8, direction)){
+			x += lengthdir_x(8, direction)
+			y += lengthdir_y(8, direction)
+		}
+	}
+	var i = 0
+	while place_free(x + lengthdir_x(1, direction), y + lengthdir_y(1, direction)){
+		x += lengthdir_x(1, direction)
+		y += lengthdir_y(1, direction)
+		i++
+		//If no wall is detected nearby, the player has come around a corner and should stop moving forward.
+		if i >= P_SIZE{
+			x -= lengthdir_x(P_SIZE, direction)
+			y -= lengthdir_y(P_SIZE, direction)
+			break
+		}
+	}
+	//Save speed as force if it would damage the player
+	if abs(hspeed) > 1.2*player_speed{
+		x_force = hspeed
+	}
+	//Save speed as force if it would damage the player
+	if abs(vspeed) > 1.2*player_speed{
+		y_force = vspeed
+	}
+	if not distant_collision{
+		if not place_free(x + hspeed, y) hspeed = 0
+		if not place_free(x, y + vspeed) vspeed = 0
+	}
+	else{
+		hspeed = 0
+		vspeed = 0
+	}
+}
+/*
+for (var i=0;i<h_iterations;i++){
+	if not place_free(x + sign(hspeed)*min(abs(hspeed),max(i*P_SIZE,P_SIZE)), y){
+		while place_free(x + sign(hspeed), y){
+			x += sign(hspeed)
+		}
+		//Save speed as force if it would damage the player
+		if abs(hspeed) > 1.2*player_speed{
+			x_force = hspeed
+		}
+		hspeed = 0
+		break
+	}
+}
+for (var i=0;i<v_iterations;i++){
+	if not place_free(x, y + sign(vspeed)*min(abs(vspeed),max(i*P_SIZE,P_SIZE))){
+		while place_free(x, y + sign(vspeed)){
+			y += sign(vspeed)
+		}
+		//Save speed as force if it would damage the player
+		if abs(vspeed) > 1.2*player_speed{
+			y_force = vspeed
+		}
+		vspeed = 0
+		break
+	}
+}
+*/
+/*
 for (var i=0;i<h_iterations;i++){
 	if not place_free(x + sign(hspeed)*min(abs(hspeed),max(i*P_SIZE,P_SIZE)), y){
 		while place_free(x + x_inc + sign(hspeed), y){
@@ -141,12 +226,14 @@ for (var i=0;i<h_iterations;i++){
 	}
 }
 for (var i=0;i<v_iterations;i++){
-	if not place_free(x, y + sign(vspeed)*min(abs(vspeed),max(i*P_SIZE,P_SIZE))){
-		while place_free(x, y + y_inc + sign(vspeed)){
+	if not place_free(x + x_inc, y + sign(vspeed)*min(abs(vspeed),max(i*P_SIZE,P_SIZE))){
+		while place_free(x + x_inc, y + y_inc + sign(vspeed)){
 			y_inc += sign(vspeed)
 		}
 		//Save speed as force if it would damage the player
-		if abs(vspeed) > 1.2*player_speed y_force = vspeed
+		if abs(vspeed) > 1.2*player_speed{
+			y_force = vspeed
+		}
 		vspeed = 0
 		break
 	}
@@ -154,74 +241,7 @@ for (var i=0;i<v_iterations;i++){
 //Add on stored increments
 x += x_inc
 y += y_inc
-
-/*
-if collision_line(x, y, x+hspeed, y+vspeed, par_solid, false, true) != noone{ //If someone somewhere along the path to the next position
-		//First move right up to the object
-		while place_free(x + sign(hspeed), y) x += sign(hspeed)
-		while place_free(x, y + sign(vspeed)) y += sign(vspeed)
-		hspeed = 0
-		vspeed = 0
-}
-
-
-
-
-
-while not place_free(x + min(hspeed,SMALLEST), y) or not place_free(x, y + min(vspeed, SMALLEST)){
-	if not place_free(x + min(hspeed,SMALLEST), y){
-		if speed > 2*player_speed{
-			hp -= round(speed)
-			var BigInst = instance_place(x + min(hspeed,SMALLEST), y, par_wall)
-			if BigInst != noone{
-				with BigInst{
-					//Create 4x4 of small walls in place
-					for (var i=0; i<4; i++){
-						for (var j=0; j<4; j++){
-							instance_create_layer(x + i*8,y + j*8, "lay_instances", Small)
-						}
-					}
-					instance_destroy(self)
-				}
-			}
-			var Inst = instance_place(x + min(hspeed, SMALLEST), y, par_small_wall)
-			if Inst != noone{
-				Inst.hp -= round(speed)*(weight/100)
-				if Inst.hp <= 0{
-					instance_destroy(Inst)
-				}
-			}
-		}
-		hspeed = reduce(hspeed)
-	}
-	if not place_free(x, y + min(vspeed, SMALLEST)){
-		if speed > 2*player_speed{
-			hp -= round(speed)
-			var BigInst = instance_place(x, y + min(vspeed, SMALLEST), par_wall)
-			if BigInst != noone{
-				with BigInst{
-					//Create 4x4 of small walls in place
-					for (var i=0; i<4; i++){
-						for (var j=0; j<4; j++){
-							instance_create_layer(x + i*8,y + j*8, "lay_instances", Small)
-						}
-					}
-					instance_destroy(self)
-				}
-			}
-			var Inst = instance_place(x, y + min(vspeed, SMALLEST), par_small_wall)
-			if Inst != noone{
-				Inst.hp -= round(speed)*(weight/100)
-				if Inst.hp <= 0{
-					instance_destroy(Inst)
-				}
-			}
-		}
-		vspeed = reduce(vspeed)
-	}
-}
 */
-
 //Keep in room bounds
 if x < 0 x = 0
 if y < 0 y = 0
@@ -327,6 +347,9 @@ else{
 
 #endregion
 
+#region Buffers
+
+
 //Regain staminas
 if regen_buffer < 1{
 	energy += energy_regen
@@ -343,6 +366,8 @@ if regen_buffer < 1{
 else{
 	regen_buffer -= 1
 }
+
+#endregion
 
 //Die
 if hp <= 0{
