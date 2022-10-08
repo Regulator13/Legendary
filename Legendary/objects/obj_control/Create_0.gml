@@ -14,7 +14,7 @@ with instance_create_layer(400, 400, "lay_instances", obj_player){
 	set_player_stats()
 }
 
-attack_sprites = [spr_melee, spr_projectile, spr_melee, spr_melee] //sprite for each attack type
+attack_sprites = [spr_melee, spr_projectile, spr_magic, spr_spell] //sprite for each attack type
 
 #region Attack Structures
 #region Melee Attacks
@@ -38,9 +38,9 @@ stonewall = {
 	inaccuracy : 5,
 	reload : 150,
 	damage : 10, //800
-	knockback : 15,
+	knockback : .5,
 	move_speed : 1,
-	lifespan : 300,
+	lifespan : 70,
 	sprite : spr_stonewall
 }
 
@@ -62,4 +62,32 @@ dart = {
 
 #endregion
 
+#region Magic Attacks
+snowball = {
+	attack_move : create_snowball,
+	attack_type : MAGIC_ATTACK,
+	energy_cost : 200,
+	inaccuracy : 5,
+	reload : 300,
+	damage : 4, //?
+	knockback : 0,
+	move_speed : 1,
+	lifespan : 600,
+	sprite : spr_snowball
+}
+#endregion
+
+#region Magic Spells
+heavy_metal = {
+	attack_move : heavy_metal,
+	attack_type : MAGIC_SPELL,
+	can_stack : false,
+	energy_cost : 100,
+	physical_damage_multiplier : .1,
+	knockback_multiplier : .1,
+	speed_multiplier : .2,
+	reload : 300,
+	lifespan : 600,
+}
+#endregion
 #endregion

@@ -6,7 +6,7 @@ for (var i=0; i<4; i++){
 	if place_empty(_x, _y){
 		with instance_create_layer(_x, _y, "lay_instances", par_attack_move){
 			var c = obj_control
-			attack = choose(c.punch, c.dart, c.stonewall)
+			var attack = choose(c.punch, c.dart, c.stonewall, c.snowball, c.heavy_metal)
 			attack_move = attack.attack_move
 			attack_type = attack.attack_type
 			sprite_index = other.attack_sprites[attack_type]

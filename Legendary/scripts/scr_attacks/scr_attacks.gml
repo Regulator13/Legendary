@@ -1,9 +1,19 @@
 function prepare_attack(attack){
 	var energy_cost = attack.energy_cost
+	var enough_energy = false //Does the player have enough energy to perform this move?
+	if attack.attack_type <= 1 and energy >= energy_cost{
+		enough_energy = true
+		energy -= energy_cost
+	}
+	else if attack.attack_type == 2 and mp >= energy_cost{
+		enough_energy = true
+		mp -= energy_cost
+	}
+	
 	var inaccuracy = attack.inaccuracy //attack's variance to right or left of target in pixels
 	inaccuracy*= 100/(100+player_accuracy)
-	if energy >= energy_cost{
-		energy -= energy_cost
+	
+	if enough_energy{
 		//Use same direction for all
 		if instance_exists(Target){
 			var dir = point_direction(x, y, Target.x, Target.y)
@@ -30,9 +40,11 @@ function set_attack_stats(attack){
 	//Set base attack stats
 	damage = attack.damage*other.strength/100
 	knockback = attack.knockback
-	lifespan = attack.lifespan		
+	lifespan = attack.lifespan
+	alarm[0] = lifespan
 	team = other.player_num
 	reload = other.reload
+	attack_type = attack.attack_type
 	speed = attack.move_speed
 	direction = other.attack_stats.attack_dir
 	sprite_index = attack.sprite
@@ -81,6 +93,22 @@ function create_stonewall(){ //Creates a 10*2 horizontal line of 2X2 particles
 					set_attack_stats(attack)
 				}
 			}
+		}
+	}
+}
+#endregion
+
+#region Magic Attacks
+function create_snowball(){ //Creates a single snowball that grows over time
+	var attack = obj_control.snowball
+	attack_stats = prepare_attack(attack)
+	//If the player has enough energy
+	if attack_stats != 0{
+		with instance_create_layer(x, y, "lay_instances", obj_snowball){
+			set_attack_stats(attack)
+			//set size snowball can grow based on mind
+			lifespan = min(max(round(log10(other.mind)*100), 100), 600)
+			alarm[0] = lifespan
 		}
 	}
 }

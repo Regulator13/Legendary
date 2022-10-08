@@ -1,6 +1,8 @@
 //Attack types
 #macro MELEE 0
 #macro PROJECTILE 1
+#macro MAGIC_ATTACK 2
+#macro MAGIC_SPELL 3
 
 
 //Misc

@@ -3,7 +3,7 @@
 
 function set_player_stats(){
 	//Physical
-	hp_max = stat_chooser(1000000) //Player's health
+	hp_max = stat_chooser(1000) //Player's health
 	strength = stat_chooser(100) //Strength/100 = physical attack multiplier
 	energy_regen = stat_chooser(10) //Energy regained every 10 steps
 	hp = hp_max
@@ -24,7 +24,7 @@ function set_player_stats(){
 	willpower = spirit_max
 
 	//Other
-	player_speed = 1 + max(stat_chooser(1) - 1, 0) //How fast the player moves
+	player_speed = 1 + (round(max(stat_chooser(1) - 1, 0)*10)/20) //How fast the player moves
 	attack_speed = stat_chooser(20) //100/(100+attack_speed) = multiplier for reload times
 	player_accuracy = stat_chooser(20) //100/(100+player_accuracy) = multiplier for how accurate attacks are
 	weight = stat_chooser(100) //weight*knockback/100 = speed knocked back at

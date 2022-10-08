@@ -26,6 +26,7 @@ else if player_num = 1{
 #region Moving
 hspeed = sign(hspeed)*(max(abs(hspeed)-(deceleration_speed), 0))
 vspeed = sign(vspeed)*(max(abs(vspeed)-(deceleration_speed), 0))
+var mod_speed = player_speed * speed_multiplier
 
 //Knockback
 if abs(h_knockback) > 0 or abs(v_knockback) > 0{
@@ -42,23 +43,23 @@ if knockback_buffer < 1{
 
 if x_force == 0 and y_force == 0{ //Moving only allowed if not flying into a wall
 	if left{
-		if hspeed > -player_speed{
-			hspeed -= player_speed/acceleration_steps + deceleration_speed
+		if hspeed > -mod_speed{
+			hspeed -= mod_speed/acceleration_steps + deceleration_speed
 		}
 	}
 	if right{
-		if hspeed < player_speed{
-			hspeed += player_speed/acceleration_steps + deceleration_speed
+		if hspeed < mod_speed{
+			hspeed += mod_speed/acceleration_steps + deceleration_speed
 		}
 	}
 	if up{
-		if vspeed > -player_speed{
-			vspeed -= player_speed/acceleration_steps + deceleration_speed
+		if vspeed > -mod_speed{
+			vspeed -= mod_speed/acceleration_steps + deceleration_speed
 		}
 	}
 	if down{
-		if vspeed < player_speed{
-			vspeed += player_speed/acceleration_steps + deceleration_speed
+		if vspeed < mod_speed{
+			vspeed += mod_speed/acceleration_steps + deceleration_speed
 		}
 	}
 }
@@ -167,11 +168,11 @@ if distant_collision or close_collision{
 		}
 	}
 	//Save speed as force if it would damage the player
-	if abs(hspeed) > 1.2*player_speed{
+	if abs(hspeed) > 1.2*mod_speed{
 		x_force = hspeed
 	}
 	//Save speed as force if it would damage the player
-	if abs(vspeed) > 1.2*player_speed{
+	if abs(vspeed) > 1.2*mod_speed{
 		y_force = vspeed
 	}
 	if not distant_collision{
@@ -190,7 +191,7 @@ for (var i=0;i<h_iterations;i++){
 			x += sign(hspeed)
 		}
 		//Save speed as force if it would damage the player
-		if abs(hspeed) > 1.2*player_speed{
+		if abs(hspeed) > 1.2*mod_speed{
 			x_force = hspeed
 		}
 		hspeed = 0
@@ -203,7 +204,7 @@ for (var i=0;i<v_iterations;i++){
 			y += sign(vspeed)
 		}
 		//Save speed as force if it would damage the player
-		if abs(vspeed) > 1.2*player_speed{
+		if abs(vspeed) > 1.2*mod_speed{
 			y_force = vspeed
 		}
 		vspeed = 0
@@ -218,7 +219,7 @@ for (var i=0;i<h_iterations;i++){
 			x_inc += sign(hspeed)
 		}
 		//Save speed as force if it would damage the player
-		if abs(hspeed) > 1.2*player_speed{
+		if abs(hspeed) > 1.2*mod_speed{
 			x_force = hspeed
 		}
 		hspeed = 0
@@ -231,7 +232,7 @@ for (var i=0;i<v_iterations;i++){
 			y_inc += sign(vspeed)
 		}
 		//Save speed as force if it would damage the player
-		if abs(vspeed) > 1.2*player_speed{
+		if abs(vspeed) > 1.2*mod_speed{
 			y_force = vspeed
 		}
 		vspeed = 0
@@ -250,9 +251,9 @@ if y > room_height y = room_height
 #endregion
 
 #region Attack
-if attack_buffer < 1{
-	var Inst = instance_place(x, y, par_attack_move)
+if switch_buffer < 1{
 	if primary{
+		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
 			var temp_move = Inst.attack_move
@@ -267,11 +268,21 @@ if attack_buffer < 1{
 			primary_attack = temp_move
 			attack_types[0] = temp_attack_type
 			obj_control.attack_sprites[0] = temp_sprite
-			attack_buffer += 20
+			switch_buffer += 15
 		}
-		else if primary_attack != 0 primary_attack()
+		else if primary_attack != 0{
+			//If move is an attack check attack buffer
+			if attack_types[0] <= 2 and attack_buffer < 1{
+				primary_attack()
+			}
+			//If move is a spell check cast buffer
+			else if attack_types[0] == 3 and cast_buffer < 1{
+				primary_attack()
+			}
+		}
 	}
 	if secondary{
+		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
 			var temp_move = Inst.attack_move
@@ -286,11 +297,21 @@ if attack_buffer < 1{
 			secondary_attack = temp_move
 			attack_types[1] = temp_attack_type
 			obj_control.attack_sprites[1] = temp_sprite
-			attack_buffer += 20
+			switch_buffer += 15
 		}
-		else if secondary_attack != 0 secondary_attack()
+		else if secondary_attack != 0{
+			//If move is an attack check attack buffer
+			if attack_types[1] <= 2 and attack_buffer < 1{
+				secondary_attack()
+			}
+			//If move is a spell check cast buffer
+			else if attack_types[1] == 3 and cast_buffer < 1{
+				secondary_attack()
+			}
+		}
 	}
 	if tertiary{
+		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
 			var temp_move = Inst.attack_move
@@ -305,11 +326,21 @@ if attack_buffer < 1{
 			tertiary_attack = temp_move
 			attack_types[2] = temp_attack_type
 			obj_control.attack_sprites[2] = temp_sprite
-			attack_buffer += 20
+			switch_buffer += 15
 		}
-		else if tertiary_attack != 0 tertiary_attack()
+		else if tertiary_attack != 0{
+			//If move is an attack check attack buffer
+			if attack_types[2] <= 2 and attack_buffer < 1{
+				tertiary_attack()
+			}
+			//If move is a spell check cast buffer
+			else if attack_types[2] == 3 and cast_buffer < 1{
+				tertiary_attack()
+			}
+		}
 	}
 	if quaternary{
+		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
 			var temp_move = Inst.attack_move
@@ -324,13 +355,35 @@ if attack_buffer < 1{
 			quaternary_attack = temp_move
 			attack_types[3] = temp_attack_type
 			obj_control.attack_sprites[3] = temp_sprite
-			attack_buffer += 20
+			switch_buffer += 15
 		}
-		else if quaternary_attack != 0 quaternary_attack()
+		else if quaternary_attack != 0{
+			//If move is an attack check attack buffer
+			if attack_types[3] <= 2 and attack_buffer < 1{
+				quaternary_attack()
+			}
+			//If move is a spell check cast buffer
+			else if attack_types[3] == 3 and cast_buffer < 1{
+				quaternary_attack()
+			}
+		}
 	}
 }
-else if attack_buffer > 0{
+
+
+#endregion
+
+#region Buffers
+if attack_buffer > 0{
 	attack_buffer -= 1
+}
+
+if cast_buffer > 0{
+	cast_buffer -= 1
+}
+
+if switch_buffer > 0{
+	switch_buffer -= 1
 }
 
 //Find current target every few steps
@@ -344,11 +397,6 @@ if target_search_buffer < 1{
 else{
 	target_search_buffer -= 1
 }
-
-#endregion
-
-#region Buffers
-
 
 //Regain staminas
 if regen_buffer < 1{
@@ -365,6 +413,17 @@ if regen_buffer < 1{
 }
 else{
 	regen_buffer -= 1
+}
+
+//Trigger reversing of active spells
+for (var i=0;i<max_active_spells;i++){
+	if spell_effect_buffer[i] > 0{
+		spell_effect_buffer[i]--
+		if spell_effect_buffer[i] == 0{
+			reverse_spell(spells_active[i])
+			spells_active[i] = 0 //Remove spell from active list
+		}
+	}
 }
 
 #endregion

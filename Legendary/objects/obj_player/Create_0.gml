@@ -41,18 +41,29 @@ player_speed = 1 //How fast the player moves
 attack_speed = 0 //100/(100+attack_speed) = multiplier for reload times
 player_accuracy = 0 //100/(100+player_accuracy) = multiplier for how accurate attacks are
 weight = 100 //weight*knockback/100 = speed knocked back at
+max_active_spells = 10 //max number of spells player can have active at once
+#endregion
+
+#region Other Stats
+physical_damage_multiplier = 1 //How much damage is taken by physical attacks
+knockback_multiplier = 1 //How much knockback effects you
+speed_multiplier = 1 //How fast you move
 #endregion
 
 #region Buffers
-attack_buffer_max = 30
-target_search_buffer_max = 10
+attack_buffer_max = 30 //Time between using attaacks
+target_search_buffer_max = 10 //Time between updating targets
+cast_buffer = 0 //Time between casting spells
+switch_buffer = 0 //Time between switching out for new attacks
+spell_effect_buffer = array_create(max_active_spells, 0) //how long active spells are lasting
 
 attack_buffer = attack_buffer_max
 target_search_buffer = target_search_buffer_max
 #endregion
 
 primary_attack = create_punch
-secondary_attack = create_dart
+secondary_attack = heavy_metal
 tertiary_attack = create_stonewall
-quaternary_attack = 0
-attack_types = [MELEE, PROJECTILE, MELEE, MELEE] //attack_type of attacks in each slot
+quaternary_attack = create_snowball
+attack_types = [MELEE, MAGIC_SPELL, PROJECTILE, MAGIC_ATTACK] //attack_type of attacks in each slot
+spells_active = array_create(max_active_spells, 0) //Which spells are currently active (used with spell_effect_buffer)
