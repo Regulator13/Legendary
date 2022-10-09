@@ -44,10 +44,15 @@ weight = 100 //weight*knockback/100 = speed knocked back at
 max_active_spells = 10 //max number of spells player can have active at once
 #endregion
 
-#region Other Stats
+#region Multipliers
 physical_damage_multiplier = 1 //How much damage is taken by physical attacks
 knockback_multiplier = 1 //How much knockback effects you
 speed_multiplier = 1 //How fast you move
+#endregion
+
+#region Effects
+poison_quantity = 0 //How much poison is in your body (or how long it will take to dissapate)
+poison_toxicity = 0 //How damaging that poison is
 #endregion
 
 #region Buffers
@@ -56,14 +61,18 @@ target_search_buffer_max = 10 //Time between updating targets
 cast_buffer = 0 //Time between casting spells
 switch_buffer = 0 //Time between switching out for new attacks
 spell_effect_buffer = array_create(max_active_spells, 0) //how long active spells are lasting
+poison_check_buffer_max = 10 //number of steps between poison dealing damage/dissipating
 
 attack_buffer = attack_buffer_max
 target_search_buffer = target_search_buffer_max
+poison_check_buffer = poison_check_buffer_max
 #endregion
 
 primary_attack = create_punch
-secondary_attack = heavy_metal
+secondary_attack = create_dart
 tertiary_attack = create_stonewall
 quaternary_attack = create_snowball
-attack_types = [MELEE, MAGIC_SPELL, PROJECTILE, MAGIC_ATTACK] //attack_type of attacks in each slot
+var c = obj_control
+attacks_equipped = [c.punch, c.dart, c.stonewall, c.snowball]
+//Put entire moves into an array so all pertinent stats can be transferred to items
 spells_active = array_create(max_active_spells, 0) //Which spells are currently active (used with spell_effect_buffer)

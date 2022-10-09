@@ -256,27 +256,20 @@ if switch_buffer < 1{
 		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
-			var temp_move = Inst.attack_move
-			var temp_attack_type = Inst.attack_type
-			var temp_sprite = Inst.sprite_index
+			var temp_move = Inst.attack
 			if primary_attack == 0 instance_destroy(Inst)
-			else{
-				Inst.attack_move = primary_attack
-				Inst.attack_type = attack_types[0]
-				Inst.sprite_index = obj_control.attack_sprites[0]
-			}
-			primary_attack = temp_move
-			attack_types[0] = temp_attack_type
-			obj_control.attack_sprites[0] = temp_sprite
+			else Inst.attack = attacks_equipped[0]
+			primary_attack = temp_move.attack_move
+			attacks_equipped[0] = temp_move
 			switch_buffer += 15
 		}
 		else if primary_attack != 0{
 			//If move is an attack check attack buffer
-			if attack_types[0] <= 2 and attack_buffer < 1{
+			if attacks_equipped[0].attack_type <= 2 and attack_buffer < 1{
 				primary_attack()
 			}
 			//If move is a spell check cast buffer
-			else if attack_types[0] == 3 and cast_buffer < 1{
+			else if attacks_equipped[0].attack_type == 3 and cast_buffer < 1{
 				primary_attack()
 			}
 		}
@@ -285,27 +278,20 @@ if switch_buffer < 1{
 		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
-			var temp_move = Inst.attack_move
-			var temp_attack_type = Inst.attack_type
-			var temp_sprite = Inst.sprite_index
+			var temp_move = Inst.attack
 			if secondary_attack == 0 instance_destroy(Inst)
-			else{
-				Inst.attack_move = secondary_attack
-				Inst.attack_type = attack_types[1]
-				Inst.sprite_index = obj_control.attack_sprites[1]
-			}
-			secondary_attack = temp_move
-			attack_types[1] = temp_attack_type
-			obj_control.attack_sprites[1] = temp_sprite
+			else Inst.attack = attacks_equipped[1]
+			secondary_attack = temp_move.attack_move
+			attacks_equipped[1] = temp_move
 			switch_buffer += 15
 		}
 		else if secondary_attack != 0{
 			//If move is an attack check attack buffer
-			if attack_types[1] <= 2 and attack_buffer < 1{
+			if attacks_equipped[1].attack_type <= 2 and attack_buffer < 1{
 				secondary_attack()
 			}
 			//If move is a spell check cast buffer
-			else if attack_types[1] == 3 and cast_buffer < 1{
+			else if attacks_equipped[1].attack_type == 3 and cast_buffer < 1{
 				secondary_attack()
 			}
 		}
@@ -314,27 +300,20 @@ if switch_buffer < 1{
 		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
-			var temp_move = Inst.attack_move
-			var temp_attack_type = Inst.attack_type
-			var temp_sprite = Inst.sprite_index
+			var temp_move = Inst.attack
 			if tertiary_attack == 0 instance_destroy(Inst)
-			else{
-				Inst.attack_move = tertiary_attack
-				Inst.attack_type = attack_types[2]
-				Inst.sprite_index = obj_control.attack_sprites[2]
-			}
-			tertiary_attack = temp_move
-			attack_types[2] = temp_attack_type
-			obj_control.attack_sprites[2] = temp_sprite
+			else Inst.attack = attacks_equipped[2]
+			tertiary_attack = temp_move.attack_move
+			attacks_equipped[2] = temp_move
 			switch_buffer += 15
 		}
 		else if tertiary_attack != 0{
 			//If move is an attack check attack buffer
-			if attack_types[2] <= 2 and attack_buffer < 1{
+			if attacks_equipped[2].attack_type <= 2 and attack_buffer < 1{
 				tertiary_attack()
 			}
 			//If move is a spell check cast buffer
-			else if attack_types[2] == 3 and cast_buffer < 1{
+			else if attacks_equipped[2].attack_type == 3 and cast_buffer < 1{
 				tertiary_attack()
 			}
 		}
@@ -343,27 +322,20 @@ if switch_buffer < 1{
 		var Inst = instance_place(x, y, par_attack_move)
 		//If over an attack move, swap for it
 		if Inst != noone{
-			var temp_move = Inst.attack_move
-			var temp_attack_type = Inst.attack_type
-			var temp_sprite = Inst.sprite_index
+			var temp_move = Inst.attack
 			if quaternary_attack == 0 instance_destroy(Inst)
-			else{
-				Inst.attack_move = quaternary_attack
-				Inst.attack_type = attack_types[3]
-				Inst.sprite_index = obj_control.attack_sprites[3]
-			}
-			quaternary_attack = temp_move
-			attack_types[3] = temp_attack_type
-			obj_control.attack_sprites[3] = temp_sprite
+			else Inst.attack = attacks_equipped[3]
+			quaternary_attack = temp_move.attack_move
+			attacks_equipped[3] = temp_move
 			switch_buffer += 15
 		}
 		else if quaternary_attack != 0{
 			//If move is an attack check attack buffer
-			if attack_types[3] <= 2 and attack_buffer < 1{
+			if attacks_equipped[3].attack_type <= 2 and attack_buffer < 1{
 				quaternary_attack()
 			}
 			//If move is a spell check cast buffer
-			else if attack_types[3] == 3 and cast_buffer < 1{
+			else if attacks_equipped[3].attack_type == 3 and cast_buffer < 1{
 				quaternary_attack()
 			}
 		}
@@ -414,6 +386,17 @@ if regen_buffer < 1{
 else{
 	regen_buffer -= 1
 }
+
+//Take damage from poison
+if poison_check_buffer < 1 and poison_toxicity > 0{
+	hp -= poison_toxicity
+	poison_quantity -= 1
+	if poison_quantity == 0{ //Reset poison toxicity when system is clear
+		poison_toxicity = 0
+	}
+	poison_check_buffer = poison_check_buffer_max
+}
+else poison_check_buffer -= 1
 
 //Trigger reversing of active spells
 for (var i=0;i<max_active_spells;i++){

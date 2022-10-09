@@ -45,6 +45,7 @@ function set_attack_stats(attack){
 	team = other.player_num
 	reload = other.reload
 	attack_type = attack.attack_type
+	effect = attack.effect
 	speed = attack.move_speed
 	direction = other.attack_stats.attack_dir
 	sprite_index = attack.sprite
@@ -60,21 +61,6 @@ function create_punch(){ //Creates a 3X3 block of 3X3 punch particles
 				with instance_create_layer(x + i*3, y + j*3, "lay_instances", par_attack){
 					set_attack_stats(attack)
 				}
-			}
-		}
-	}
-}
-
-#endregion
-
-#region Projectile Attacks					
-function create_dart(){ //Creates a 1X5 line of 2X2 dart particles
-	var attack = obj_control.dart
-	attack_stats = prepare_attack(attack)
-	if attack_stats != 0{
-		for (var i=-2; i<=2; i++){
-			with instance_create_layer(x + lengthdir_x(2*i, attack_stats.attack_dir), y + lengthdir_y(2*i, attack_stats.attack_dir), "lay_instances", par_attack){
-				set_attack_stats(attack)
 			}
 		}
 	}
@@ -96,6 +82,33 @@ function create_stonewall(){ //Creates a 10*2 horizontal line of 2X2 particles
 		}
 	}
 }
+#endregion
+
+#region Projectile Attacks					
+function create_dart(){ //Creates a 1X5 line of 2X2 dart particles
+	var attack = obj_control.dart
+	attack_stats = prepare_attack(attack)
+	if attack_stats != 0{
+		for (var i=-2; i<=2; i++){
+			with instance_create_layer(x + lengthdir_x(2*i, attack_stats.attack_dir), y + lengthdir_y(2*i, attack_stats.attack_dir), "lay_instances", par_attack){
+				set_attack_stats(attack)
+			}
+		}
+	}
+}
+
+function create_poison_arrow(){ //Creates a 1X4 line of 2X2 poison arrow particles
+	var attack = obj_control.poison_arrow
+	attack_stats = prepare_attack(attack)
+	if attack_stats != 0{
+		for (var i=-1; i<=2; i++){
+			with instance_create_layer(x + lengthdir_x(2*i, attack_stats.attack_dir), y + lengthdir_y(2*i, attack_stats.attack_dir), "lay_instances", par_attack){
+				set_attack_stats(attack)
+			}
+		}
+	}
+}
+
 #endregion
 
 #region Magic Attacks

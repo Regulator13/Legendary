@@ -1,4 +1,4 @@
-/// @description Create attacks
+/// @description Create attacks items
 
 for (var i=0; i<4; i++){
 	_x = irandom(room_width)
@@ -6,10 +6,7 @@ for (var i=0; i<4; i++){
 	if place_empty(_x, _y){
 		with instance_create_layer(_x, _y, "lay_instances", par_attack_move){
 			var c = obj_control
-			var attack = choose(c.punch, c.dart, c.stonewall, c.snowball, c.heavy_metal)
-			attack_move = attack.attack_move
-			attack_type = attack.attack_type
-			sprite_index = other.attack_sprites[attack_type]
+			attack = choose(c.punch, c.dart, c.poison_arrow, c.stonewall, c.snowball, c.heavy_metal)
 		}
 	}
 	else i++

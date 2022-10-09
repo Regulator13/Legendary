@@ -14,6 +14,11 @@ if other.team != player_num{
 	var knockback_amt = (other.knockback/(weight/100))*knockback_multiplier
 	h_knockback += lengthdir_x(knockback_amt, other.direction)
 	v_knockback += lengthdir_y(knockback_amt, other.direction)
+	
+	//Apply any effect the attack has on the player
+	if other.effect != 0{
+		other.effect(self)
+	}
 
 	//If either is less than 1, destroy them
 	if other.damage <= 0{
